@@ -26,101 +26,113 @@
     font-family:"Hiragino Sans","Noto Sans JP",sans-serif;
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
-    padding:20px 16px 40px;
+    padding:12px 14px calc(16px + env(safe-area-inset-bottom));
   }
-  .header{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    margin-bottom:18px;
-  }
-  .header h1{ font-size:1.7rem; margin:0; letter-spacing:0.02em; }
+  .header{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px; }
+  .header h1{ font-size:1.35rem; margin:0; letter-spacing:0.02em; }
   .header h1 .accent{ color:var(--accent); }
-  .who{ font-size:0.8rem; color:var(--dim); text-align:right; }
+  .who{ font-size:0.75rem; color:var(--dim); text-align:right; }
+
   .tabs{
     display:flex; background:var(--panel); border:1px solid var(--panel-edge);
-    border-radius:14px; padding:5px; gap:4px; margin-bottom:18px;
+    border-radius:12px; padding:4px; gap:4px; margin-bottom:10px;
   }
   .tab{
-    flex:1; text-align:center; padding:12px 4px; border-radius:10px;
-    font-size:0.95rem; color:var(--dim); cursor:pointer; user-select:none;
+    flex:1; text-align:center; padding:9px 4px; border-radius:9px;
+    font-size:0.9rem; color:var(--dim); cursor:pointer; user-select:none;
   }
   .tab.active{ background:var(--key-active); color:var(--cream); }
   .panel{ display:none; }
   .panel.active{ display:block; }
+
+  /* ===== 記録画面(1画面に収まるようコンパクトに) ===== */
   .board{
-    background:var(--panel); border:1px solid var(--panel-edge); border-radius:20px;
-    padding:28px 20px; text-align:center; margin-bottom:14px;
+    background:var(--panel); border:1px solid var(--panel-edge); border-radius:16px;
+    padding:10px 16px 12px; text-align:center; margin-bottom:8px;
   }
-  .board .label{ color:var(--dim); font-size:0.9rem; letter-spacing:0.3em; margin-bottom:8px; }
-  .board .count{ font-size:5.2rem; font-weight:700; line-height:1; }
+  .board .label{ color:var(--dim); font-size:0.75rem; letter-spacing:0.3em; margin-bottom:2px; }
+  .board .count{ font-size:clamp(2.6rem, 11vw, 3.4rem); font-weight:700; line-height:1.05; }
   .board .unit{
-    font-size:1.4rem; color:var(--dim); border:2px solid var(--dim); border-radius:6px;
-    padding:0 6px; vertical-align:middle; margin-left:6px;
+    font-size:1rem; color:var(--dim); border:2px solid var(--dim); border-radius:5px;
+    padding:0 5px; vertical-align:middle; margin-left:6px;
   }
-  .keypad{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:18px; }
+
+  .duo{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .mini{
+    background:var(--panel); border:1px solid var(--panel-edge); border-radius:14px;
+    padding:9px 11px 10px; min-width:0;
+  }
+  .mini.team{ border-color:#4a3a2a; }
+  .mini-top{ display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:2px; }
+  .mini-label{ font-size:0.68rem; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini-btn{
+    flex:none; background:transparent; border:1px solid var(--panel-edge); color:var(--dim);
+    border-radius:8px; font-size:0.65rem; padding:3px 7px; cursor:pointer; font-family:inherit;
+  }
+  .mini-val{ font-size:1.35rem; font-weight:700; line-height:1.2; }
+  .mini.team .mini-val{ color:var(--gold); }
+  .mini-val small{ font-size:0.7rem; color:var(--dim); font-weight:400; margin-left:2px; }
+  .mini-foot{ display:flex; justify-content:space-between; gap:4px; font-size:0.66rem; color:var(--dim); margin-top:5px; white-space:nowrap; }
+  .mini-foot b{ color:var(--cream); }
+
+  .bar{ height:6px; background:#14100d; border-radius:99px; overflow:hidden; margin-top:5px; }
+  .bar span{ display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width 0.4s; }
+  .bar.done span{ background:var(--gold); }
+
+  .keypad{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:8px; }
   .key{
-    background:var(--key); border:1px solid var(--panel-edge); border-radius:16px;
-    padding:26px 0; text-align:center; font-size:2rem; color:var(--cream);
-    cursor:pointer; user-select:none; transition:background 0.1s;
+    background:var(--key); border:1px solid var(--panel-edge); border-radius:12px;
+    height:clamp(44px, 7vh, 60px); display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem; color:var(--cream); cursor:pointer; user-select:none; transition:background 0.1s;
   }
   .key:active{ background:var(--key-active); }
   .submit-btn{
-    display:block; width:100%; background:var(--accent); border:none; border-radius:16px;
-    padding:20px 0; font-size:1.15rem; font-weight:700; color:var(--cream); cursor:pointer;
+    display:block; width:100%; background:var(--accent); border:none; border-radius:14px;
+    padding:14px 0; font-size:1.05rem; font-weight:700; color:var(--cream); cursor:pointer; font-family:inherit;
   }
   .submit-btn:active{ background:var(--accent-dark); }
-  .submit-btn .accent-word{ color:#2a1710; }
-  .msg{ text-align:center; font-size:0.85rem; min-height:1.2em; margin:10px 0 0; }
+  .msg{ text-align:center; font-size:0.8rem; min-height:1.2em; margin:6px 0 0; }
   .msg.ok{ color:#8fd19e; }
   .msg.err{ color:#e08a7a; }
-  .rank-tabs{ display:flex; gap:8px; margin-bottom:12px; }
+
+  /* ===== ランキング ===== */
+  .rank-tabs{ display:flex; gap:8px; margin-bottom:10px; }
   .rank-tab{
     flex:1; text-align:center; padding:8px 0; border-radius:10px; background:var(--panel);
     border:1px solid var(--panel-edge); color:var(--dim); font-size:0.85rem; cursor:pointer;
   }
   .rank-tab.active{ color:var(--cream); border-color:var(--accent); }
-  .row{
-    background:var(--panel); border:1px solid var(--panel-edge);
-    border-radius:14px; padding:14px 16px; margin-bottom:8px;
-  }
+  .row{ background:var(--panel); border:1px solid var(--panel-edge); border-radius:14px; padding:12px 14px; margin-bottom:8px; }
   .row.top3{ border-color:var(--gold); }
   .row.me{ border-color:var(--accent); }
   .row-main{ display:flex; align-items:center; }
-  .rk{ width:34px; font-size:1.1rem; text-align:center; }
-  .nm{ flex:1; font-size:1rem; padding-left:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .ct{ font-size:1.3rem; font-weight:700; }
-  .ct small{ font-size:0.75rem; color:var(--dim); margin-left:2px; font-weight:400; }
-  .empty{ color:var(--dim); text-align:center; padding:30px 0; font-size:0.9rem; }
-  .legend{ display:flex; flex-wrap:wrap; gap:8px 14px; margin-bottom:14px; font-size:0.8rem; }
-  .legend-item{ display:flex; align-items:center; gap:6px; color:var(--dim); }
-  .legend-dot{ width:10px; height:10px; border-radius:50%; }
-  canvas{ width:100%; height:420px; display:block; }
-
-  /* ===== 目標まわり ===== */
-  .goal-card{
-    background:var(--panel); border:1px solid var(--panel-edge); border-radius:16px;
-    padding:14px 16px; margin-bottom:18px;
-  }
-  .goal-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
-  .goal-label{ font-size:0.75rem; color:var(--dim); margin-bottom:2px; }
-  .goal-val{ font-size:1.1rem; font-weight:700; color:var(--gold); }
-  .goal-val small{ font-size:0.75rem; color:var(--dim); font-weight:400; margin-left:4px; }
-  .goal-val.none{ color:var(--dim); font-weight:400; font-size:0.95rem; }
-  .goal-set{
-    flex:none; background:transparent; border:1px solid var(--panel-edge); color:var(--dim);
-    border-radius:10px; font-size:0.75rem; padding:7px 12px; cursor:pointer; font-family:inherit;
-  }
-  .bar{ height:8px; background:#14100d; border-radius:99px; overflow:hidden; }
-  .bar span{ display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width 0.4s; }
-  .bar.done span{ background:var(--gold); }
-  .goal-foot{ display:flex; justify-content:space-between; font-size:0.75rem; color:var(--dim); margin-top:7px; }
-  .goal-foot b{ color:var(--cream); }
-
-  .row-goal{ margin-top:10px; }
-  .row-goal .bar{ height:6px; }
+  .rk{ width:32px; font-size:1.05rem; text-align:center; }
+  .nm{ flex:1; font-size:0.98rem; padding-left:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ct{ font-size:1.25rem; font-weight:700; }
+  .ct small{ font-size:0.72rem; color:var(--dim); margin-left:2px; font-weight:400; }
+  .row-goal{ margin-top:8px; }
   .row-goal .g-foot{ display:flex; justify-content:space-between; font-size:0.72rem; color:var(--dim); margin-top:5px; }
   .row-goal .g-foot b{ color:var(--cream); }
+  .empty{ color:var(--dim); text-align:center; padding:30px 0; font-size:0.9rem; }
+
+  .team-card{
+    background:var(--panel); border:1px solid var(--gold); border-radius:18px;
+    padding:22px 18px; text-align:center;
+  }
+  .team-label{ font-size:0.85rem; color:var(--dim); letter-spacing:0.15em; }
+  .team-total{ font-size:4rem; font-weight:700; color:var(--gold); line-height:1.1; margin:6px 0 2px; }
+  .team-total small{ font-size:1.1rem; color:var(--dim); font-weight:400; margin-left:4px; }
+  .team-sub{ font-size:0.8rem; color:var(--dim); margin-bottom:16px; }
+  .team-card .bar{ height:10px; }
+  .team-foot{ display:flex; justify-content:space-between; font-size:0.85rem; color:var(--dim); margin-top:8px; text-align:left; }
+  .team-foot b{ color:var(--cream); }
+  .team-nogoal{ font-size:0.85rem; color:var(--dim); padding-top:4px; }
+
+  /* ===== 推移 ===== */
+  .legend{ display:flex; flex-wrap:wrap; gap:8px 14px; margin-bottom:12px; font-size:0.8rem; }
+  .legend-item{ display:flex; align-items:center; gap:6px; color:var(--dim); }
+  .legend-dot{ width:10px; height:10px; border-radius:50%; }
+  canvas{ width:100%; height:400px; display:block; }
 
   /* ===== 目標設定モーダル ===== */
   .modal{
@@ -130,30 +142,28 @@
   .modal.open{ display:flex; }
   .sheet{
     width:100%; max-width:520px; background:var(--bg);
-    border-top-left-radius:22px; border-top-right-radius:22px;
-    border-top:1px solid var(--panel-edge);
-    padding:22px 16px calc(24px + env(safe-area-inset-bottom));
-    max-height:92vh; overflow-y:auto;
+    border-top-left-radius:20px; border-top-right-radius:20px; border-top:1px solid var(--panel-edge);
+    padding:18px 14px calc(18px + env(safe-area-inset-bottom));
+    max-height:94vh; overflow-y:auto;
   }
-  .sheet h2{ margin:0 0 4px; font-size:1.2rem; }
-  .sheet .lead{ font-size:0.8rem; color:var(--dim); line-height:1.6; margin:0 0 16px; }
-  .sheet .board{ padding:20px; margin-bottom:14px; }
-  .sheet .board .count{ font-size:3.6rem; }
-  .field{ margin-bottom:16px; }
-  .field label{ display:block; font-size:0.78rem; color:var(--dim); margin-bottom:7px; }
+  .sheet h2{ margin:0 0 4px; font-size:1.1rem; }
+  .sheet .lead{ font-size:0.75rem; color:var(--dim); line-height:1.6; margin:0 0 10px; }
+  .sheet .board{ margin-bottom:8px; }
+  .field{ margin:4px 0 10px; }
+  .field label{ display:block; font-size:0.75rem; color:var(--dim); margin-bottom:6px; }
   .field input[type=date]{
     width:100%; background:var(--key); border:1px solid var(--panel-edge); color:var(--cream);
-    font-family:inherit; font-size:1rem; padding:13px 14px; border-radius:12px;
+    font-family:inherit; font-size:1rem; padding:11px 12px; border-radius:12px;
   }
   .quick{ display:flex; gap:8px; margin-top:8px; }
   .quick button{
     flex:1; background:var(--panel); border:1px solid var(--panel-edge); color:var(--dim);
-    font-family:inherit; font-size:0.75rem; padding:9px 0; border-radius:10px; cursor:pointer;
+    font-family:inherit; font-size:0.75rem; padding:8px 0; border-radius:10px; cursor:pointer;
   }
   .quick button.active{ border-color:var(--accent); color:var(--cream); }
   .sheet-actions{ display:flex; gap:10px; margin-top:6px; }
   .sheet-actions button{
-    flex:1; border:none; border-radius:14px; padding:16px 0;
+    flex:1; border:none; border-radius:14px; padding:14px 0;
     font-size:1rem; font-weight:700; font-family:inherit; cursor:pointer;
   }
   .btn-cancel{ background:var(--key); color:var(--dim); }
@@ -174,24 +184,33 @@
   <div class="tab" data-tab="trend">推移</div>
 </div>
 
+<!-- ================= 記録する ================= -->
 <div class="panel active" id="panel-record">
   <div class="board">
     <div class="label">連続回数</div>
     <div><span class="count" id="countDisplay">0</span><span class="unit">回</span></div>
   </div>
 
-  <div class="goal-card">
-    <div class="goal-top">
-      <div>
-        <div class="goal-label">わたしの目標</div>
-        <div class="goal-val none" id="goalVal">未設定</div>
+  <div class="duo">
+    <!-- 自分 -->
+    <div class="mini">
+      <div class="mini-top">
+        <div class="mini-label">わたしの今週ベスト</div>
+        <button class="mini-btn" id="goalSetBtn">目標</button>
       </div>
-      <button class="goal-set" id="goalSetBtn">目標を設定</button>
+      <div class="mini-val" id="myVal">0<small>回</small></div>
+      <div class="bar" id="myBar"><span></span></div>
+      <div class="mini-foot"><span id="myGoalTxt">目標 未設定</span><span id="myRate"></span></div>
     </div>
-    <div class="bar" id="goalBar"><span></span></div>
-    <div class="goal-foot">
-      <div id="goalNow">今週ベスト <b>0</b>回</div>
-      <div id="goalRate"></div>
+    <!-- チーム -->
+    <div class="mini team">
+      <div class="mini-top">
+        <div class="mini-label">チーム合計(今週)</div>
+        <button class="mini-btn" id="teamGoalSetBtn" style="display:none;">目標</button>
+      </div>
+      <div class="mini-val" id="teamVal">0<small>回</small></div>
+      <div class="bar" id="teamBar"><span></span></div>
+      <div class="mini-foot"><span id="teamGoalTxt">目標 未設定</span><span id="teamRate"></span></div>
     </div>
   </div>
 
@@ -209,41 +228,42 @@
     <div class="key" data-k="0">0</div>
     <div class="key" data-k="DEL">⌫</div>
   </div>
-  <button class="submit-btn" id="submitBtn">
-    けん玉<span class="accent-word">チャレンジ</span> この回数で記録する
-  </button>
+  <button class="submit-btn" id="submitBtn">この回数で記録する</button>
   <div class="msg" id="msg"></div>
 </div>
 
+<!-- ================= ランキング ================= -->
 <div class="panel" id="panel-ranking">
+  <div class="rank-tabs">
+    <div class="rank-tab active" data-rview="team">チーム合計</div>
+    <div class="rank-tab" data-rview="all">全員</div>
+  </div>
   <div class="rank-tabs">
     <div class="rank-tab active" data-period="thisWeek">今週</div>
     <div class="rank-tab" data-period="lastWeek">先週</div>
   </div>
-  <div class="rank-tabs">
-    <div class="rank-tab active" data-rscope="all">全員</div>
-    <div class="rank-tab" data-rscope="self">自分だけ</div>
-  </div>
   <div id="rankingList"><div class="empty">読み込み中...</div></div>
 </div>
 
+<!-- ================= 推移 ================= -->
 <div class="panel" id="panel-trend">
   <div class="rank-tabs">
-    <div class="rank-tab active" data-scope="self">自分だけ</div>
+    <div class="rank-tab active" data-scope="team">チーム全体</div>
+    <div class="rank-tab" data-scope="self">自分だけ</div>
     <div class="rank-tab" data-scope="all">全員</div>
   </div>
   <div class="legend" id="legend"></div>
   <canvas id="trendCanvas"></canvas>
 </div>
 
-<!-- 目標設定モーダル -->
+<!-- ================= 目標設定モーダル(個人/チーム共通) ================= -->
 <div class="modal" id="goalModal">
   <div class="sheet">
-    <h2>目標を設定する</h2>
-    <p class="lead">達成したい連続回数と期限を決めましょう。<br>期限が過ぎても目標はそのまま残ります。総合目標にしたいときは「期限なし」を選んでください。</p>
+    <h2 id="goalTitle">目標を設定する</h2>
+    <p class="lead" id="goalLead"></p>
 
     <div class="board">
-      <div class="label">目標の連続回数</div>
+      <div class="label">目標の回数</div>
       <div><span class="count" id="goalCountDisplay">0</span><span class="unit">回</span></div>
     </div>
 
@@ -282,38 +302,42 @@
 
 <script>
 /* ============================================================
-   設定：GASのウェブアプリURLとLIFF IDをここに入れてください
+   設定：GASのウェブアプリURLとLIFF ID
    ============================================================ */
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbxxEkPwBfrblKjZypzB_S601hdePQMzSpYHXOcsPwOltDw_haR78Os0_A2OoRaUf9L7/exec';
 var LIFF_ID = '2010756814-JMY12Gib';
 
 var USER = null;
+var IS_ADMIN = false;
 var currentCount = '0';
-var MY = { weekBest:0, goal:0, deadline:'' };   // 自分の状況
+var MY   = { weekBest:0, goal:0, deadline:'' };
+var TEAM = { total:0, goal:0, deadline:'' };
 
+/* ---------- タブ ---------- */
 document.querySelectorAll('.tab').forEach(function(tab){
   tab.addEventListener('click', function(){
     document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
     document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
     tab.classList.add('active');
     document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
-    if(tab.dataset.tab === 'ranking') loadRanking();
+    if(tab.dataset.tab === 'ranking') loadRanking(false);
     if(tab.dataset.tab === 'trend') loadTrend();
   });
 });
 
+/* ---------- 記録キーパッド ---------- */
 document.getElementById('keypad').addEventListener('click', function(e){
   var key = e.target.closest('.key');
   if(!key) return;
-  var k = key.dataset.k;
-  if(k === 'C'){ currentCount = '0'; }
-  else if(k === 'DEL'){ currentCount = currentCount.length>1 ? currentCount.slice(0,-1) : '0'; }
-  else {
-    currentCount = (currentCount === '0') ? k : (currentCount + k);
-    if(currentCount.length > 5) currentCount = currentCount.slice(0,5);
-  }
+  currentCount = pressKey(currentCount, key.dataset.k);
   document.getElementById('countDisplay').textContent = currentCount;
 });
+function pressKey(cur, k){
+  if(k === 'C') return '0';
+  if(k === 'DEL') return cur.length > 1 ? cur.slice(0,-1) : '0';
+  var v = (cur === '0') ? k : (cur + k);
+  return v.length > 5 ? v.slice(0,5) : v;
+}
 
 function setMsg(text, cls){
   var m = document.getElementById('msg');
@@ -321,75 +345,58 @@ function setMsg(text, cls){
   m.className = 'msg ' + (cls||'');
 }
 
+/* ---------- 記録送信 ---------- */
 document.getElementById('submitBtn').addEventListener('click', function(){
   var count = Number(currentCount);
-  if(!USER){
-    setMsg('LINEログインの確認中です。少し待ってから再度お試しください。', 'err');
-    return;
-  }
-  if(!count && count !== 0){
-    setMsg('回数を入力してください。', 'err');
-    return;
-  }
+  if(!USER){ setMsg('LINEログインの確認中です。少し待ってから再度お試しください。', 'err'); return; }
   setMsg('送信中...', '');
   fetch(GAS_URL, {
     method: 'POST',
-    body: JSON.stringify({
-      action: 'submit',
-      userId: USER.userId,
-      displayName: USER.displayName,
-      count: count
-    })
+    body: JSON.stringify({ action:'submit', userId:USER.userId, displayName:USER.displayName, count:count })
   })
   .then(function(res){ return res.json(); })
   .then(function(json){
     if(json.ok){
-      var d = json.data || {};
       var hit = MY.goal > 0 && count >= MY.goal;
       setMsg(hit ? '🎯 目標達成！ ' + count + '回を記録しました！' : count + '回を記録しました！', 'ok');
-      if(typeof d.weekBest === 'number') MY.weekBest = d.weekBest;
-      if(typeof d.goal === 'number') MY.goal = d.goal;
-      if(typeof d.deadline === 'string') MY.deadline = d.deadline;
-      renderGoalCard();
       currentCount = '0';
       document.getElementById('countDisplay').textContent = '0';
-      rankingData = null;   // 次にランキングを開いたら取り直す
       trendRawData = null;
+      loadRanking(true);   // 自分・チームの数字を最新化
     } else {
       setMsg('記録に失敗しました：' + json.error, 'err');
     }
   })
-  .catch(function(err){
-    setMsg('通信エラー：' + err, 'err');
-  });
+  .catch(function(err){ setMsg('通信エラー：' + err, 'err'); });
 });
 
 /* ============================================================
-   目標カード
+   記録画面のミニカード(自分 / チーム)
    ============================================================ */
-function renderGoalCard(){
-  var val  = document.getElementById('goalVal');
-  var bar  = document.getElementById('goalBar');
-  var now  = document.getElementById('goalNow');
-  var rate = document.getElementById('goalRate');
-
-  now.innerHTML = '今週ベスト <b>' + MY.weekBest + '</b>回';
-
-  if(!MY.goal){
-    val.className = 'goal-val none';
-    val.textContent = '未設定';
-    bar.className = 'bar';
-    bar.firstElementChild.style.width = '0%';
-    rate.textContent = '';
+function renderCards(){
+  // 自分
+  document.getElementById('myVal').innerHTML = MY.weekBest + '<small>回</small>';
+  fillBar('myBar', 'myGoalTxt', 'myRate', MY.weekBest, MY.goal);
+  // チーム
+  document.getElementById('teamVal').innerHTML = TEAM.total + '<small>回</small>';
+  fillBar('teamBar', 'teamGoalTxt', 'teamRate', TEAM.total, TEAM.goal);
+  document.getElementById('teamGoalSetBtn').style.display = IS_ADMIN ? '' : 'none';
+}
+function fillBar(barId, txtId, rateId, val, goal){
+  var bar = document.getElementById(barId);
+  var txt = document.getElementById(txtId);
+  var rate = document.getElementById(rateId);
+  if(!goal){
+    bar.className = 'bar'; bar.firstElementChild.style.width = '0%';
+    txt.textContent = '目標 未設定'; rate.textContent = '';
     return;
   }
-  var done = MY.weekBest >= MY.goal;
-  var pct = Math.min(100, Math.round(MY.weekBest / MY.goal * 100));
-  val.className = 'goal-val';
-  val.innerHTML = MY.goal + '回<small>' + (MY.deadline ? deadlineLabel(MY.deadline) : '期限なし') + '</small>';
+  var done = val >= goal;
+  var pct = Math.min(100, Math.round(val / goal * 100));
   bar.className = 'bar' + (done ? ' done' : '');
   bar.firstElementChild.style.width = pct + '%';
-  rate.innerHTML = done ? '🎯 達成！' : '達成率 <b>' + pct + '%</b>';
+  txt.innerHTML = '目標 <b>' + goal + '</b>回';
+  rate.innerHTML = done ? '🎯達成' : '<b>' + pct + '%</b>';
 }
 
 function deadlineLabel(d){
@@ -404,49 +411,47 @@ function deadlineLabel(d){
 }
 
 /* ============================================================
-   目標設定モーダル
+   目標設定モーダル(mode: 'self' 個人 / 'team' チーム)
    ============================================================ */
-var goalModal   = document.getElementById('goalModal');
-var goalEntry   = '0';
-var goalDateEl  = document.getElementById('goalDate');
-var goalMsgEl   = document.getElementById('goalMsg');
+var goalModal  = document.getElementById('goalModal');
+var goalMode   = 'self';
+var goalEntry  = '0';
+var goalDateEl = document.getElementById('goalDate');
+var goalMsgEl  = document.getElementById('goalMsg');
 
-document.getElementById('goalSetBtn').addEventListener('click', function(){
-  goalEntry = MY.goal ? String(MY.goal) : '0';
+document.getElementById('goalSetBtn').addEventListener('click', function(){ openGoal('self'); });
+document.getElementById('teamGoalSetBtn').addEventListener('click', function(){ openGoal('team'); });
+
+function openGoal(mode){
+  goalMode = mode;
+  var cur = (mode === 'team') ? TEAM : MY;
+  document.getElementById('goalTitle').textContent = (mode === 'team') ? 'チーム目標を設定する' : '目標を設定する';
+  document.getElementById('goalLead').textContent = (mode === 'team')
+    ? 'チーム合計(全員の今週ベストの合計)の目標です。管理者だけが設定できます。'
+    : '達成したい連続回数と期限を決めましょう。期限が過ぎても目標は残ります。総合目標にするときは「期限なし」を選んでください。';
+  goalEntry = cur.goal ? String(cur.goal) : '0';
   document.getElementById('goalCountDisplay').textContent = goalEntry;
-  goalDateEl.value = MY.deadline || addMonths(1);
+  goalDateEl.value = cur.goal ? (cur.deadline || '') : addMonths(1);
   markQuick();
   goalMsgEl.textContent = ''; goalMsgEl.className = 'msg';
   goalModal.classList.add('open');
-});
-document.getElementById('goalCancel').addEventListener('click', function(){
-  goalModal.classList.remove('open');
-});
-goalModal.addEventListener('click', function(e){
-  if(e.target === goalModal) goalModal.classList.remove('open');
-});
+}
+document.getElementById('goalCancel').addEventListener('click', function(){ goalModal.classList.remove('open'); });
+goalModal.addEventListener('click', function(e){ if(e.target === goalModal) goalModal.classList.remove('open'); });
 
 document.getElementById('goalKeypad').addEventListener('click', function(e){
   var key = e.target.closest('.key');
   if(!key) return;
-  var k = key.dataset.k;
-  if(k === 'C'){ goalEntry = '0'; }
-  else if(k === 'DEL'){ goalEntry = goalEntry.length>1 ? goalEntry.slice(0,-1) : '0'; }
-  else {
-    goalEntry = (goalEntry === '0') ? k : (goalEntry + k);
-    if(goalEntry.length > 5) goalEntry = goalEntry.slice(0,5);
-  }
+  goalEntry = pressKey(goalEntry, key.dataset.k);
   document.getElementById('goalCountDisplay').textContent = goalEntry;
 });
 
 function addMonths(m){
-  var d = new Date();
-  d.setMonth(d.getMonth() + m);
+  var d = new Date(); d.setMonth(d.getMonth() + m);
   return d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
 }
 document.getElementById('goalQuick').addEventListener('click', function(e){
-  var b = e.target.closest('button');
-  if(!b) return;
+  var b = e.target.closest('button'); if(!b) return;
   var m = Number(b.dataset.m);
   goalDateEl.value = (m === 0) ? '' : addMonths(m);
   markQuick();
@@ -455,63 +460,55 @@ goalDateEl.addEventListener('change', markQuick);
 function markQuick(){
   document.querySelectorAll('#goalQuick button').forEach(function(b){
     var m = Number(b.dataset.m);
-    var v = (m === 0) ? '' : addMonths(m);
-    if(goalDateEl.value === v) b.classList.add('active');
-    else b.classList.remove('active');
+    b.classList.toggle('active', goalDateEl.value === ((m === 0) ? '' : addMonths(m)));
   });
 }
 
 document.getElementById('goalSave').addEventListener('click', function(){
   var goal = Number(goalEntry);
-  if(!USER){
-    goalMsgEl.textContent = 'LINEログインの確認中です。少し待ってから再度お試しください。';
-    goalMsgEl.className = 'msg err';
-    return;
-  }
-  if(!goal || goal <= 0){
-    goalMsgEl.textContent = '1以上の目標回数を入力してください。';
-    goalMsgEl.className = 'msg err';
-    return;
-  }
+  if(!USER){ showGoalErr('LINEログインの確認中です。少し待ってから再度お試しください。'); return; }
+  if(!goal || goal <= 0){ showGoalErr('1以上の目標回数を入力してください。'); return; }
   goalMsgEl.textContent = '保存中...'; goalMsgEl.className = 'msg';
-  fetch(GAS_URL, {
-    method: 'POST',
-    body: JSON.stringify({
-      action: 'setGoal',
-      userId: USER.userId,
-      displayName: USER.displayName,
-      goal: goal,
-      deadline: goalDateEl.value || ''
-    })
-  })
+
+  var payload = (goalMode === 'team')
+    ? { action:'setTeamGoal', userId:USER.userId, goal:goal, deadline:goalDateEl.value || '' }
+    : { action:'setGoal', userId:USER.userId, displayName:USER.displayName, goal:goal, deadline:goalDateEl.value || '' };
+
+  fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) })
   .then(function(res){ return res.json(); })
   .then(function(json){
     if(json.ok){
-      MY.goal = json.data.goal;
-      MY.deadline = json.data.deadline || '';
-      renderGoalCard();
+      var target = (goalMode === 'team') ? TEAM : MY;
+      target.goal = json.data.goal;
+      target.deadline = json.data.deadline || '';
+      renderCards();
       goalModal.classList.remove('open');
-      setMsg('🎯 目標を ' + MY.goal + '回 に設定しました！', 'ok');
-      rankingData = null;
+      setMsg('🎯 ' + (goalMode === 'team' ? 'チーム目標' : '目標') + 'を ' + target.goal + '回 に設定しました！', 'ok');
       trendRawData = null;
+      loadRanking(true);
     } else {
-      goalMsgEl.textContent = '保存に失敗しました：' + json.error;
-      goalMsgEl.className = 'msg err';
+      showGoalErr('保存に失敗しました：' + json.error);
     }
   })
-  .catch(function(err){
-    goalMsgEl.textContent = '通信エラー：' + err;
-    goalMsgEl.className = 'msg err';
-  });
+  .catch(function(err){ showGoalErr('通信エラー：' + err); });
 });
+function showGoalErr(t){ goalMsgEl.textContent = t; goalMsgEl.className = 'msg err'; }
 
 /* ============================================================
-   ランキング
+   ランキング(チーム合計 / 全員) × (今週 / 先週)
    ============================================================ */
 var rankingData = null;
+var rankView = 'team';
 var currentPeriod = 'thisWeek';
-var rankScope = 'all';   // 'all' or 'self'
 
+document.querySelectorAll('#panel-ranking .rank-tab[data-rview]').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('#panel-ranking .rank-tab[data-rview]').forEach(function(x){ x.classList.remove('active'); });
+    t.classList.add('active');
+    rankView = t.dataset.rview;
+    renderRanking();
+  });
+});
 document.querySelectorAll('#panel-ranking .rank-tab[data-period]').forEach(function(t){
   t.addEventListener('click', function(){
     document.querySelectorAll('#panel-ranking .rank-tab[data-period]').forEach(function(x){ x.classList.remove('active'); });
@@ -520,24 +517,17 @@ document.querySelectorAll('#panel-ranking .rank-tab[data-period]').forEach(funct
     renderRanking();
   });
 });
-document.querySelectorAll('#panel-ranking .rank-tab[data-rscope]').forEach(function(t){
-  t.addEventListener('click', function(){
-    document.querySelectorAll('#panel-ranking .rank-tab[data-rscope]').forEach(function(x){ x.classList.remove('active'); });
-    t.classList.add('active');
-    rankScope = t.dataset.rscope;
-    renderRanking();
-  });
-});
 
-function loadRanking(){
-  if(rankingData){ renderRanking(); return; }
-  document.getElementById('rankingList').innerHTML = '<div class="empty">読み込み中...</div>';
-  fetch(GAS_URL + '?action=ranking')
+function loadRanking(force){
+  if(rankingData && !force){ renderRanking(); return; }
+  if(!rankingData) document.getElementById('rankingList').innerHTML = '<div class="empty">読み込み中...</div>';
+  var uid = USER ? USER.userId : '';
+  fetch(GAS_URL + '?action=ranking&userId=' + encodeURIComponent(uid))
     .then(function(res){ return res.json(); })
     .then(function(json){
       if(json.ok){
         rankingData = json.data;
-        syncMyState();
+        applyState();
         renderRanking();
       } else {
         document.getElementById('rankingList').innerHTML = '<div class="empty">読み込みに失敗しました</div>';
@@ -548,31 +538,56 @@ function loadRanking(){
     });
 }
 
-// ランキング結果から自分の今週ベスト・目標を拾って目標カードに反映
-function syncMyState(){
-  if(!rankingData || !USER) return;
-  (rankingData.thisWeek || []).forEach(function(r){
-    if(r.id === USER.userId){
-      MY.weekBest = r.max;
-      MY.goal = r.goal || 0;
-      MY.deadline = r.deadline || '';
-    }
-  });
-  renderGoalCard();
+// ランキング結果から自分・チームの状態を取り出して記録画面に反映
+function applyState(){
+  if(!rankingData) return;
+  IS_ADMIN = !!rankingData.isAdmin;
+  MY = { weekBest:0, goal:0, deadline:'' };
+  if(USER){
+    (rankingData.thisWeek || []).forEach(function(r){
+      if(r.id === USER.userId){ MY = { weekBest:r.max, goal:r.goal || 0, deadline:r.deadline || '' }; }
+    });
+  }
+  var t = rankingData.team || {};
+  TEAM = { total:(t.thisWeek && t.thisWeek.total) || 0, goal:t.goal || 0, deadline:t.deadline || '' };
+  renderCards();
 }
 
 function renderRanking(){
   if(!rankingData) return;
+  if(rankView === 'team') renderTeamView();
+  else renderAllView();
+}
+
+function renderTeamView(){
+  var t = rankingData.team || {};
+  var p = t[currentPeriod] || { total:0, members:0, rate:0 };
+  var html = '<div class="team-card">'
+           +   '<div class="team-label">' + (currentPeriod === 'thisWeek' ? '今週' : '先週') + 'のチーム合計</div>'
+           +   '<div class="team-total">' + p.total + '<small>回</small></div>'
+           +   '<div class="team-sub">記録した人 ' + p.members + '人(各自のベストの合計)</div>';
+  if(t.goal > 0){
+    var done = p.total >= t.goal;
+    var pct = Math.min(100, p.rate);
+    html += '<div class="bar' + (done ? ' done' : '') + '"><span style="width:' + pct + '%"></span></div>'
+          + '<div class="team-foot">'
+          +   '<div>目標 <b>' + t.goal + '</b>回' + (t.deadline ? '<br>' + escapeHtml(deadlineLabel(t.deadline)) : '') + '</div>'
+          +   '<div>' + (done ? '🎯 達成！' : '達成率 <b>' + p.rate + '%</b>') + '</div>'
+          + '</div>';
+  } else {
+    html += '<div class="team-nogoal">チーム目標は未設定です</div>';
+  }
+  html += '</div>';
+  document.getElementById('rankingList').innerHTML = html;
+}
+
+function renderAllView(){
   var list = rankingData[currentPeriod] || [];
   var box = document.getElementById('rankingList');
-  if(list.length === 0){
-    box.innerHTML = '<div class="empty">まだ記録がありません</div>';
-    return;
-  }
+  if(list.length === 0){ box.innerHTML = '<div class="empty">まだ記録がありません</div>'; return; }
   var html = '';
   list.forEach(function(r, i){
     var mine = USER && r.id === USER.userId;
-    if(rankScope === 'self' && !mine) return;
     var cls = (i<3 ? 'top3' : '') + (mine ? ' me' : '');
     var badge = i<3 ? ['🥇','🥈','🥉'][i] : (i+1);
     var goalHtml = '';
@@ -580,23 +595,22 @@ function renderRanking(){
       var done = r.max >= r.goal;
       var pct = Math.min(100, r.rate);
       goalHtml = '<div class="row-goal">'
-               +   '<div class="bar'+(done?' done':'')+'"><span style="width:'+pct+'%"></span></div>'
+               +   '<div class="bar' + (done ? ' done' : '') + '"><span style="width:' + pct + '%"></span></div>'
                +   '<div class="g-foot">'
-               +     '<div>目標 <b>'+r.goal+'</b>回'+(r.deadline ? '　'+escapeHtml(deadlineLabel(r.deadline)) : '')+'</div>'
-               +     '<div>'+(done ? '🎯 達成！' : '達成率 <b>'+r.rate+'%</b>')+'</div>'
+               +     '<div>目標 <b>' + r.goal + '</b>回' + (r.deadline ? '　' + escapeHtml(deadlineLabel(r.deadline)) : '') + '</div>'
+               +     '<div>' + (done ? '🎯 達成！' : '達成率 <b>' + r.rate + '%</b>') + '</div>'
                +   '</div>'
                + '</div>';
     }
-    html += '<div class="row '+cls+'">'
+    html += '<div class="row ' + cls + '">'
           +   '<div class="row-main">'
-          +     '<div class="rk">'+badge+'</div>'
-          +     '<div class="nm">'+escapeHtml(r.name)+(mine?'（自分）':'')+'</div>'
-          +     '<div class="ct">'+r.max+'<small>回</small></div>'
-          +   '</div>'
-          +   goalHtml
+          +     '<div class="rk">' + badge + '</div>'
+          +     '<div class="nm">' + escapeHtml(r.name) + (mine ? '（自分）' : '') + '</div>'
+          +     '<div class="ct">' + r.max + '<small>回</small></div>'
+          +   '</div>' + goalHtml
           + '</div>';
   });
-  box.innerHTML = html || '<div class="empty">あなたの記録・目標はまだありません</div>';
+  box.innerHTML = html;
 }
 
 function escapeHtml(s){
@@ -606,9 +620,9 @@ function escapeHtml(s){
 }
 
 /* ============================================================
-   推移
+   推移(チーム全体 / 自分だけ / 全員)
    ============================================================ */
-var trendScope = 'self'; // 'self' or 'all'
+var trendScope = 'team';
 var trendRawData = null;
 var trendColors = ['#c1502e','#e8b64a','#8fd19e','#7aa9d1','#c98a4a','#b57edc','#e07a9e','#9ad1c9','#d1c17a','#7ac9d1'];
 
@@ -626,45 +640,44 @@ function loadTrend(){
   fetch(GAS_URL + '?action=trend')
     .then(function(res){ return res.json(); })
     .then(function(json){
-      if(json.ok){
-        trendRawData = json.data;
-        drawTrend(filterTrendData(trendRawData));
-      }
+      if(json.ok){ trendRawData = json.data; drawTrend(filterTrendData(trendRawData)); }
     })
     .catch(function(){});
 }
 
-function myGoalValue(){
-  if(!trendRawData || !USER) return 0;
-  var g = trendRawData.goals && trendRawData.goals[USER.userId];
-  return g ? Number(g.goal) : 0;
-}
-
+// 表示モードごとの系列と目標ライン
 function filterTrendData(raw){
-  var filtered;
-  if(trendScope === 'all' || !USER){
-    filtered = raw;
+  var out;
+  if(trendScope === 'team'){
+    var tg = raw.teamGoal || { goal:0 };
+    out = { labels: raw.labels,
+            series: [{ id:'__team', name:'チーム合計', data: raw.teamSeries || [] }],
+            goal: Number(tg.goal) || 0, goalLabel: 'チーム目標', goalColor: '#e8b64a', lineColor: '#e8b64a' };
+  } else if(trendScope === 'self' && USER){
+    var g = raw.goals && raw.goals[USER.userId];
+    out = { labels: raw.labels,
+            series: raw.series.filter(function(s){ return s.id === USER.userId; }),
+            goal: g ? Number(g.goal) : 0, goalLabel: '自分の目標', goalColor: '#e8b64a' };
   } else {
-    var mySeries = raw.series.filter(function(s){ return s.id === USER.userId; });
-    filtered = { labels: raw.labels, series: mySeries };
+    out = { labels: raw.labels, series: raw.series, goal: 0 };
   }
-  return trimLeadingEmpty(filtered);
+  return trimLeadingEmpty(out);
 }
 
-// 全系列がnull(記録なし)の先頭週を切り詰め、実データがある週から表示する
+// 全系列がnullの先頭週を切り詰める
 function trimLeadingEmpty(data){
   var labels = data.labels, series = data.series;
   if(!series || series.length === 0) return data;
-  var firstIndex = labels.length;
+  var first = labels.length;
   for(var i=0; i<labels.length; i++){
-    var hasData = series.some(function(s){ return s.data[i] !== null; });
-    if(hasData){ firstIndex = i; break; }
+    if(series.some(function(s){ return s.data[i] !== null; })){ first = i; break; }
   }
-  if(firstIndex >= labels.length) firstIndex = labels.length - 1;
-  return {
-    labels: labels.slice(firstIndex),
-    series: series.map(function(s){ return { id:s.id, name:s.name, data:s.data.slice(firstIndex) }; })
-  };
+  if(first >= labels.length) first = labels.length - 1;
+  var copy = {};
+  for(var k in data) copy[k] = data[k];
+  copy.labels = labels.slice(first);
+  copy.series = series.map(function(s){ return { id:s.id, name:s.name, data:s.data.slice(first) }; });
+  return copy;
 }
 
 function drawTrend(data){
@@ -672,15 +685,15 @@ function drawTrend(data){
   var ctx = canvas.getContext('2d');
   var dpr = window.devicePixelRatio || 1;
   var cssW = canvas.clientWidth || 320;
-  var cssH = 420;
+  var cssH = 400;
   canvas.width = cssW * dpr;
   canvas.height = cssH * dpr;
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,cssW,cssH);
 
   var labels = data.labels;
-  var series = data.series;
-  var goalVal = myGoalValue();
+  var series = data.series || [];
+  var goalVal = data.goal || 0;
   var showValueLabels = series.length === 1;
   var padL = 40, padR = 12, padT = showValueLabels ? 28 : 14, padB = 24;
   var plotW = cssW - padL - padR;
@@ -688,7 +701,7 @@ function drawTrend(data){
 
   var allVals = [];
   series.forEach(function(s){ s.data.forEach(function(v){ if(v!==null) allVals.push(v); }); });
-  if(goalVal > 0) allVals.push(goalVal);      // 目標が収まるように縦軸を広げる
+  if(goalVal > 0) allVals.push(goalVal);
   var maxVal = allVals.length ? Math.max.apply(null, allVals) : 10;
   maxVal = Math.ceil(maxVal * 1.15) || 10;
 
@@ -699,10 +712,7 @@ function drawTrend(data){
   var gridLines = 8;
   for(var g=0; g<=gridLines; g++){
     var y = padT + plotH - (plotH * g / gridLines);
-    ctx.beginPath();
-    ctx.moveTo(padL, y);
-    ctx.lineTo(cssW - padR, y);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(cssW - padR, y); ctx.stroke();
     ctx.fillText(Math.round(maxVal * g / gridLines), 2, y+4);
   }
   labels.forEach(function(l, i){
@@ -710,36 +720,32 @@ function drawTrend(data){
     ctx.fillText(l, x-12, cssH-6);
   });
 
-  // 自分の目標ライン(金色の点線)
+  // 目標ライン(点線)
   if(goalVal > 0){
     var gy = padT + plotH - (plotH * goalVal / maxVal);
     ctx.save();
     ctx.setLineDash([6,5]);
-    ctx.strokeStyle = '#e8b64a';
+    ctx.strokeStyle = data.goalColor || '#e8b64a';
     ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(padL, gy);
-    ctx.lineTo(cssW - padR, gy);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(padL, gy); ctx.lineTo(cssW - padR, gy); ctx.stroke();
     ctx.restore();
     ctx.font = 'bold 11px sans-serif';
-    ctx.fillStyle = '#e8b64a';
+    ctx.fillStyle = data.goalColor || '#e8b64a';
     ctx.textAlign = 'right';
-    ctx.fillText('目標 ' + goalVal + '回', cssW - padR - 2, gy - 5);
+    ctx.fillText(data.goalLabel + ' ' + goalVal + '回', cssW - padR - 2, gy - 5);
     ctx.textAlign = 'left';
     ctx.font = '11px sans-serif';
-    ctx.fillStyle = '#9a8f80';
   }
 
   var legendHtml = '';
   series.forEach(function(s, si){
-    var color = trendColors[si % trendColors.length];
+    var color = data.lineColor || trendColors[si % trendColors.length];
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.beginPath();
     var started = false;
     s.data.forEach(function(v, i){
-      if(v === null) { started = false; return; }
+      if(v === null){ started = false; return; }
       var x = padL + (plotW * i / (labels.length-1 || 1));
       var y = padT + plotH - (plotH * v / maxVal);
       if(!started){ ctx.moveTo(x,y); started = true; } else { ctx.lineTo(x,y); }
@@ -749,10 +755,7 @@ function drawTrend(data){
       if(v === null) return;
       var x = padL + (plotW * i / (labels.length-1 || 1));
       var y = padT + plotH - (plotH * v / maxVal);
-      ctx.beginPath();
-      ctx.arc(x,y,3,0,Math.PI*2);
-      ctx.fillStyle = color;
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fillStyle = color; ctx.fill();
       if(showValueLabels){
         ctx.font = 'bold 13px sans-serif';
         ctx.fillStyle = '#efe7da';
@@ -762,10 +765,10 @@ function drawTrend(data){
         ctx.font = '11px sans-serif';
       }
     });
-    legendHtml += '<div class="legend-item"><span class="legend-dot" style="background:'+color+'"></span>'+escapeHtml(s.name)+'</div>';
+    legendHtml += '<div class="legend-item"><span class="legend-dot" style="background:' + color + '"></span>' + escapeHtml(s.name) + '</div>';
   });
   if(goalVal > 0){
-    legendHtml += '<div class="legend-item"><span class="legend-dot" style="background:#e8b64a"></span>自分の目標 '+goalVal+'回</div>';
+    legendHtml += '<div class="legend-item"><span class="legend-dot" style="background:' + (data.goalColor || '#e8b64a') + ';opacity:.6"></span>' + data.goalLabel + ' ' + goalVal + '回(点線)</div>';
   }
   document.getElementById('legend').innerHTML = legendHtml || '<div class="empty">まだ記録がありません</div>';
 }
@@ -774,10 +777,7 @@ function drawTrend(data){
    LIFF 初期化
    ============================================================ */
 (function init(){
-  if(typeof liff === 'undefined'){
-    document.getElementById('who').textContent = 'LIFF未読込';
-    return;
-  }
+  if(typeof liff === 'undefined'){ document.getElementById('who').textContent = 'LIFF未読込'; return; }
   liff.init({ liffId: LIFF_ID })
     .then(function(){
       if(!liff.isLoggedIn()){ liff.login(); return; }
@@ -787,7 +787,7 @@ function drawTrend(data){
       if(!profile) return;
       USER = { userId: profile.userId, displayName: profile.displayName };
       document.getElementById('who').textContent = profile.displayName + ' さん';
-      loadRanking();   // 自分の今週ベスト・目標を読み込んで目標カードに反映
+      loadRanking(true);   // 自分・チームの数字と管理者判定を読み込む
     })
     .catch(function(err){
       document.getElementById('who').textContent = '初期化エラー';
