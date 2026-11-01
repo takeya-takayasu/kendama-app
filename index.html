@@ -691,38 +691,49 @@ function drawTrend(data){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,cssW,cssH);
 
-  var labels = data.labels;
+  var labels = data.labels || [];
   var series = data.series || [];
   var goalVal = data.goal || 0;
   var showValueLabels = series.length === 1;
-  var padL = 40, padR = 12, padT = showValueLabels ? 28 : 14, padB = 24;
+  // 右端の文字が切れないよう、左右に余白を確保
+  var padL = 40, padR = 24, padT = showValueLabels ? 30 : 16, padB = 26;
   var plotW = cssW - padL - padR;
   var plotH = cssH - padT - padB;
+  var last = labels.length - 1;
+  function xAt(i){ return padL + (plotW * i / (last || 1)); }
 
+  // 縦軸:きりのいい目盛り(50刻み・100刻みなど)
   var allVals = [];
   series.forEach(function(s){ s.data.forEach(function(v){ if(v!==null) allVals.push(v); }); });
   if(goalVal > 0) allVals.push(goalVal);
-  var maxVal = allVals.length ? Math.max.apply(null, allVals) : 10;
-  maxVal = Math.ceil(maxVal * 1.15) || 10;
+  var rawMax = (allVals.length ? Math.max.apply(null, allVals) : 10) * 1.1;
+  var step = niceStep(rawMax, 6);
+  var maxVal = Math.max(step, Math.ceil(rawMax / step) * step);
+  var gridLines = Math.round(maxVal / step);
+  function yAt(v){ return padT + plotH - (plotH * v / maxVal); }
 
   ctx.strokeStyle = '#332922';
   ctx.lineWidth = 1;
   ctx.font = '11px sans-serif';
   ctx.fillStyle = '#9a8f80';
-  var gridLines = 8;
+  ctx.textAlign = 'left';
   for(var g=0; g<=gridLines; g++){
-    var y = padT + plotH - (plotH * g / gridLines);
-    ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(cssW - padR, y); ctx.stroke();
-    ctx.fillText(Math.round(maxVal * g / gridLines), 2, y+4);
+    var gyLine = yAt(step * g);
+    ctx.beginPath(); ctx.moveTo(padL, gyLine); ctx.lineTo(cssW - padR, gyLine); ctx.stroke();
+    ctx.fillText(Math.round(step * g), 2, gyLine + 4);
   }
+
+  // 横軸ラベル:画面からはみ出さないよう位置を調整。狭い時は1つおきに表示(最新週は必ず表示)
+  var gap = plotW / (last || 1);
+  var every = gap < 32 ? 2 : 1;
   labels.forEach(function(l, i){
-    var x = padL + (plotW * i / (labels.length-1 || 1));
-    ctx.fillText(l, x-12, cssH-6);
+    if(i !== last && (last - i) % every !== 0) return;
+    drawClampedText(ctx, l, xAt(i), cssH - 8, cssW);
   });
 
   // 目標ライン(点線)
   if(goalVal > 0){
-    var gy = padT + plotH - (plotH * goalVal / maxVal);
+    var gy = yAt(goalVal);
     ctx.save();
     ctx.setLineDash([6,5]);
     ctx.strokeStyle = data.goalColor || '#e8b64a';
@@ -732,9 +743,8 @@ function drawTrend(data){
     ctx.font = 'bold 11px sans-serif';
     ctx.fillStyle = data.goalColor || '#e8b64a';
     ctx.textAlign = 'right';
-    ctx.fillText(data.goalLabel + ' ' + goalVal + '回', cssW - padR - 2, gy - 5);
+    ctx.fillText(data.goalLabel + ' ' + goalVal + '回', cssW - padR, gy - 5);
     ctx.textAlign = 'left';
-    ctx.font = '11px sans-serif';
   }
 
   var legendHtml = '';
@@ -746,23 +756,19 @@ function drawTrend(data){
     var started = false;
     s.data.forEach(function(v, i){
       if(v === null){ started = false; return; }
-      var x = padL + (plotW * i / (labels.length-1 || 1));
-      var y = padT + plotH - (plotH * v / maxVal);
-      if(!started){ ctx.moveTo(x,y); started = true; } else { ctx.lineTo(x,y); }
+      if(!started){ ctx.moveTo(xAt(i), yAt(v)); started = true; } else { ctx.lineTo(xAt(i), yAt(v)); }
     });
     ctx.stroke();
     s.data.forEach(function(v, i){
       if(v === null) return;
-      var x = padL + (plotW * i / (labels.length-1 || 1));
-      var y = padT + plotH - (plotH * v / maxVal);
-      ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fillStyle = color; ctx.fill();
+      var x = xAt(i), y = yAt(v);
+      ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI*2); ctx.fillStyle = color; ctx.fill();
       if(showValueLabels){
         ctx.font = 'bold 13px sans-serif';
         ctx.fillStyle = '#efe7da';
-        ctx.textAlign = 'center';
-        ctx.fillText(v, x, y-10);
-        ctx.textAlign = 'left';
+        drawClampedText(ctx, String(v), x, y - 10, cssW);
         ctx.font = '11px sans-serif';
+        ctx.fillStyle = '#9a8f80';
       }
     });
     legendHtml += '<div class="legend-item"><span class="legend-dot" style="background:' + color + '"></span>' + escapeHtml(s.name) + '</div>';
@@ -771,6 +777,26 @@ function drawTrend(data){
     legendHtml += '<div class="legend-item"><span class="legend-dot" style="background:' + (data.goalColor || '#e8b64a') + ';opacity:.6"></span>' + data.goalLabel + ' ' + goalVal + '回(点線)</div>';
   }
   document.getElementById('legend').innerHTML = legendHtml || '<div class="empty">まだ記録がありません</div>';
+}
+
+// 中央揃えで描きつつ、左右の端からはみ出さないように位置を詰める
+function drawClampedText(ctx, text, cx, y, cssW){
+  var w = ctx.measureText(text).width;
+  var left = cx - w / 2;
+  if(left < 2) left = 2;
+  if(left + w > cssW - 2) left = cssW - 2 - w;
+  ctx.textAlign = 'left';
+  ctx.fillText(text, left, y);
+}
+
+// 目盛りの間隔を 1・2・2.5・5・10 × 10のn乗 のきりのいい値にする
+function niceStep(max, lines){
+  var raw = max / lines;
+  if(!(raw > 0)) return 1;
+  var mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+  var n = raw / mag;
+  var s = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+  return Math.max(1, s * mag);
 }
 
 /* ============================================================
