@@ -133,6 +133,7 @@
   .legend-item{ display:flex; align-items:center; gap:6px; color:var(--dim); }
   .legend-dot{ width:10px; height:10px; border-radius:50%; }
   canvas{ width:100%; height:400px; display:block; }
+  .trend-cap{ font-size:0.75rem; color:var(--dim); margin:-2px 0 8px; }
 
   /* ===== 目標設定モーダル ===== */
   .modal{
@@ -247,11 +248,17 @@
 
 <!-- ================= 推移 ================= -->
 <div class="panel" id="panel-trend">
-  <div class="rank-tabs">
+  <div class="rank-tabs" id="scopeTabs">
     <div class="rank-tab active" data-scope="team">チーム全体</div>
     <div class="rank-tab" data-scope="self">自分だけ</div>
     <div class="rank-tab" data-scope="all">全員</div>
   </div>
+  <div class="rank-tabs" id="rangeTabs">
+    <div class="rank-tab active" data-range="2m">2ヶ月</div>
+    <div class="rank-tab" data-range="6m">半年</div>
+    <div class="rank-tab" data-range="all">全期間</div>
+  </div>
+  <div class="trend-cap" id="trendCap">週ごとのベスト</div>
   <div class="legend" id="legend"></div>
   <canvas id="trendCanvas"></canvas>
 </div>
@@ -361,7 +368,7 @@ document.getElementById('submitBtn').addEventListener('click', function(){
       setMsg(hit ? '🎯 目標達成！ ' + count + '回を記録しました！' : count + '回を記録しました！', 'ok');
       currentCount = '0';
       document.getElementById('countDisplay').textContent = '0';
-      trendRawData = null;
+      trendCache = {};
       loadRanking(true);   // 自分・チームの数字を最新化
     } else {
       setMsg('記録に失敗しました：' + json.error, 'err');
@@ -484,7 +491,7 @@ document.getElementById('goalSave').addEventListener('click', function(){
       renderCards();
       goalModal.classList.remove('open');
       setMsg('🎯 ' + (goalMode === 'team' ? 'チーム目標' : '目標') + 'を ' + target.goal + '回 に設定しました！', 'ok');
-      trendRawData = null;
+      trendCache = {};
       loadRanking(true);
     } else {
       showGoalErr('保存に失敗しました：' + json.error);
@@ -623,26 +630,46 @@ function escapeHtml(s){
    推移(チーム全体 / 自分だけ / 全員)
    ============================================================ */
 var trendScope = 'team';
-var trendRawData = null;
+var trendRange = '2m';        // '2m'=2ヶ月(週ごと) / '6m'=半年(月ごと) / 'all'=全期間(月ごと)
+var trendCache = {};          // 期間ごとに取得結果を保存
 var trendColors = ['#c1502e','#e8b64a','#8fd19e','#7aa9d1','#c98a4a','#b57edc','#e07a9e','#9ad1c9','#d1c17a','#7ac9d1'];
 
-document.querySelectorAll('#panel-trend .rank-tab').forEach(function(t){
+document.querySelectorAll('#scopeTabs .rank-tab').forEach(function(t){
   t.addEventListener('click', function(){
-    document.querySelectorAll('#panel-trend .rank-tab').forEach(function(x){ x.classList.remove('active'); });
+    document.querySelectorAll('#scopeTabs .rank-tab').forEach(function(x){ x.classList.remove('active'); });
     t.classList.add('active');
     trendScope = t.dataset.scope;
-    if(trendRawData) drawTrend(filterTrendData(trendRawData));
+    loadTrend();
+  });
+});
+document.querySelectorAll('#rangeTabs .rank-tab').forEach(function(t){
+  t.addEventListener('click', function(){
+    document.querySelectorAll('#rangeTabs .rank-tab').forEach(function(x){ x.classList.remove('active'); });
+    t.classList.add('active');
+    trendRange = t.dataset.range;
+    loadTrend();
   });
 });
 
 function loadTrend(){
-  if(trendRawData){ drawTrend(filterTrendData(trendRawData)); return; }
-  fetch(GAS_URL + '?action=trend')
+  var cached = trendCache[trendRange];
+  if(cached){ showTrend(cached); return; }
+  var range = trendRange;
+  document.getElementById('trendCap').textContent = '読み込み中...';
+  fetch(GAS_URL + '?action=trend&range=' + range)
     .then(function(res){ return res.json(); })
     .then(function(json){
-      if(json.ok){ trendRawData = json.data; drawTrend(filterTrendData(trendRawData)); }
+      if(!json.ok) return;
+      trendCache[range] = json.data;
+      if(range === trendRange) showTrend(json.data);   // 読み込み中に切り替えられた場合は描かない
     })
-    .catch(function(){});
+    .catch(function(){ document.getElementById('trendCap').textContent = '通信エラーが発生しました'; });
+}
+
+function showTrend(raw){
+  document.getElementById('trendCap').textContent =
+    raw.unit === 'month' ? '月ごとのベスト(各月の最大連続回数)' : '週ごとのベスト(各週の最大連続回数)';
+  drawTrend(filterTrendData(raw));
 }
 
 // 表示モードごとの系列と目標ライン
@@ -694,7 +721,7 @@ function drawTrend(data){
   var labels = data.labels || [];
   var series = data.series || [];
   var goalVal = data.goal || 0;
-  var showValueLabels = series.length === 1;
+  var showValueLabels = series.length === 1 && labels.length <= 14;
   // 右端の文字が切れないよう、左右に余白を確保
   var padL = 40, padR = 24, padT = showValueLabels ? 30 : 16, padB = 26;
   var plotW = cssW - padL - padR;
@@ -725,7 +752,7 @@ function drawTrend(data){
 
   // 横軸ラベル:画面からはみ出さないよう位置を調整。狭い時は1つおきに表示(最新週は必ず表示)
   var gap = plotW / (last || 1);
-  var every = gap < 32 ? 2 : 1;
+  var every = Math.max(1, Math.ceil(34 / gap));
   labels.forEach(function(l, i){
     if(i !== last && (last - i) % every !== 0) return;
     drawClampedText(ctx, l, xAt(i), cssH - 8, cssW);
